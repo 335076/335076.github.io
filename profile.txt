@@ -19,8 +19,8 @@ linkedin=linkedin.com/in/alessia-musabelliu-6587982ba
 
 about1=Alessia has earned IBM Watson Orchestrate Build an AI Assistant Certificate
 about2=and Build Your Own Chatbot through IBM SkillsBuild
-about3=Outstanding Subject Tutor in Management Information Systems in American University in Bulgaria.
-about4=Issued by Honor Convocation
+about3=Alessia got the award Outstanding Subject Tutor in Management Information Systems in American University in Bulgaria.
+about4=Alessia was Issued by Honor Convocation in American University in Bulgaria
 phone=0000000000
 
 location=Germany
