@@ -1,0 +1,2675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>ENCHANTED GARDEN — AI Nature Experience</title>
+  
+  <!-- Premium Google Fonts: Cinzel Decorative & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       CSS Variables & Enchanted Theme
+       ========================================================================== */
+    :root {
+      --font-display: 'Cinzel Decorative', Georgia, serif;
+      --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+      /* Dark Midnight Palette */
+      --bg-midnight: #090611;
+      --bg-plum: #140b20;
+      --bg-forest: #07120f;
+      --bg-panel: rgba(18, 12, 32, 0.65);
+      --bg-panel-hover: rgba(28, 18, 48, 0.85);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --border-glass-glow: rgba(244, 114, 182, 0.4);
+
+      /* Magical Accent Palette */
+      --color-sakura: #ff9ebb;
+      --color-sakura-glow: rgba(255, 158, 187, 0.4);
+      --color-mint: #4ef2bb;
+      --color-mint-glow: rgba(78, 242, 187, 0.35);
+      --color-firefly: #ffd166;
+      --color-firefly-glow: rgba(255, 209, 102, 0.4);
+      --color-bloom: #c084fc;
+      --color-bloom-glow: rgba(192, 132, 252, 0.4);
+
+      --text-primary: #fdf2f8;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --shadow-glass: 0 16px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      --shadow-glow: 0 0 25px rgba(244, 114, 182, 0.3);
+    }
+
+    /* ==========================================================================
+       Reset & Base Setup
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-midnight);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Canvas background container */
+    #gardenCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: block;
+      background: radial-gradient(circle at 50% 45%, #180d28 0%, #0b0714 60%, #040207 100%);
+      transition: background 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Dynamic atmosphere overlay */
+    .atmosphere-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 40%, rgba(4, 2, 8, 0.75) 100%);
+      box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Ambient mystical glow ring */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.35;
+      transition: background 1.5s ease, opacity 1.5s ease;
+    }
+
+    /* ==========================================================================
+       UI Overlay Layer
+       ========================================================================== */
+    .ui-container {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+    }
+
+    .ui-interactive {
+      pointer-events: auto;
+    }
+
+    /* ==========================================================================
+       Glassmorphism Component Base
+       ========================================================================== */
+    .glass-card {
+      background: var(--bg-panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      box-shadow: var(--shadow-glass);
+      border-radius: var(--radius-lg);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.08);
+    }
+
+    /* ==========================================================================
+       Top Header & Navigation Bar
+       ========================================================================== */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* Title Block */
+    .brand-block {
+      padding: 14px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: var(--color-sakura);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px var(--color-sakura-glow));
+      animation: pulseBrand 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseBrand {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px var(--color-sakura-glow)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 14px var(--color-sakura-glow)); }
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      background: linear-gradient(135deg, #ffffff 0%, #ffe4ec 40%, #fbcfe8 70%, #d8b4fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 24px rgba(255, 183, 197, 0.4);
+    }
+
+    .brand-subtitle {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding-left: 32px;
+    }
+
+    /* Top-Center World Mode Selector */
+    .world-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(14, 9, 26, 0.75);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .world-btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      white-space: nowrap;
+    }
+
+    .world-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .world-btn .world-emoji {
+      font-size: 1.05rem;
+      transition: transform 0.3s ease;
+    }
+
+    .world-btn:hover .world-emoji {
+      transform: scale(1.18);
+    }
+
+    .world-btn.active {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 0 20px rgba(244, 114, 182, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .world-btn.active.sakura {
+      border-color: rgba(255, 158, 187, 0.6);
+      box-shadow: 0 0 22px rgba(255, 158, 187, 0.45);
+    }
+    .world-btn.active.butterfly {
+      border-color: rgba(78, 242, 187, 0.6);
+      box-shadow: 0 0 22px rgba(78, 242, 187, 0.4);
+    }
+    .world-btn.active.firefly {
+      border-color: rgba(255, 209, 102, 0.6);
+      box-shadow: 0 0 22px rgba(255, 209, 102, 0.4);
+    }
+    .world-btn.active.bloom {
+      border-color: rgba(192, 132, 252, 0.6);
+      box-shadow: 0 0 22px rgba(192, 132, 252, 0.45);
+    }
+
+    /* Top-Right Control Buttons */
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .action-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--bg-panel-hover);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(255, 255, 255, 0.12);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-btn.active {
+      background: rgba(78, 242, 187, 0.15);
+      border-color: var(--color-mint);
+      color: var(--color-mint);
+      box-shadow: 0 0 18px var(--color-mint-glow);
+    }
+
+    /* ==========================================================================
+       Bottom Dashboard (Left) & Mirror Video Canvas (Right)
+       ========================================================================== */
+    .bottom-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+      gap: 20px;
+    }
+
+    /* Glassmorphism Status Dashboard */
+    .dashboard-panel {
+      padding: 18px 22px;
+      width: 380px;
+      max-width: calc(100vw - 48px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+    }
+
+    .clock-display {
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .date-display {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Gesture Status Pill */
+    .gesture-indicator-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 9px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .gesture-label-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .gesture-icon-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+    }
+
+    .gesture-text-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gesture-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .gesture-value {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      transition: color 0.3s ease;
+    }
+
+    .gesture-status-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .gesture-status-tag.active-burst {
+      background: rgba(244, 63, 94, 0.25);
+      border-color: #f43f5e;
+      color: #fecdd3;
+      box-shadow: 0 0 16px rgba(244, 63, 94, 0.5);
+    }
+
+    .gesture-status-tag.active-cycle {
+      background: rgba(168, 85, 247, 0.25);
+      border-color: #a855f7;
+      color: #e9d5ff;
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    .gesture-status-tag.no-hand {
+      background: rgba(148, 163, 184, 0.15);
+      border-color: rgba(148, 163, 184, 0.3);
+      color: var(--text-muted);
+    }
+
+    /* Telemetry grid: Particles, FPS, Scale */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 10px;
+    }
+
+    .telemetry-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .telemetry-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .telemetry-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+
+    /* Scale bar indicator inside scale box */
+    .scale-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .scale-bar-fill {
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, var(--color-mint), var(--color-sakura));
+      border-radius: var(--radius-full);
+      transition: width 0.15s ease-out;
+    }
+
+    /* Bottom-Right Small Mirrored Webcam Skeleton Box */
+    .webcam-container {
+      position: relative;
+      width: 220px;
+      height: 165px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: rgba(6, 4, 12, 0.85);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .webcam-container:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Hidden underlying video tag used as feed */
+    #webcamVideo {
+      display: none;
+    }
+
+    /* Canvas that draws video + glowing 21-point skeleton */
+    #skeletonCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Camera Status Badge */
+    .camera-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      background: rgba(10, 6, 18, 0.75);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      z-index: 5;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      box-shadow: 0 0 6px rgba(148, 163, 184, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .status-dot.active {
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseGreen 2s infinite;
+    }
+
+    .status-dot.loading {
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b;
+      animation: pulseYellow 1.5s infinite;
+    }
+
+    .status-dot.error {
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.75; }
+    }
+
+    @keyframes pulseYellow {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+
+    /* Fallback switch button inside camera card if permission denied */
+    .cam-overlay-btn {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 8, 20, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      text-align: center;
+      z-index: 6;
+      cursor: pointer;
+    }
+
+    .cam-overlay-btn span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .cam-overlay-btn .action-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
+    }
+
+    /* ==========================================================================
+       Interactive Modals & Notifications
+       ========================================================================== */
+    /* World Switch Splash Announcement */
+    .world-splash-banner {
+      position: fixed;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      pointer-events: none;
+      z-index: 25;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .world-splash-banner.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .world-splash-name {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      background: linear-gradient(135deg, #ffffff 0%, #ffe4ec 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(255, 183, 197, 0.7);
+    }
+
+    .world-splash-desc {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Modal Help / Gesture Guide */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 2, 8, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: rgba(18, 12, 32, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 40px rgba(244, 114, 182, 0.2);
+      width: 100%;
+      max-width: 580px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.open .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 14px;
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .guide-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .guide-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+      padding: 4px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .guide-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .guide-info strong {
+      font-size: 0.82rem;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+
+    .guide-info p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .shortcut-legend {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .shortcut-pill {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kbd {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-family: monospace;
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.68rem;
+    }
+
+    /* Small toast notification */
+    .toast-pill {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(50px);
+      background: rgba(14, 9, 24, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(16px);
+      padding: 8px 20px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 50;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast-pill.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Mobile / Small Screen Responsiveness */
+    @media (max-width: 900px) {
+      .top-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand-block {
+        width: 100%;
+        text-align: center;
+        align-items: center;
+      }
+      .brand-subtitle {
+        padding-left: 0;
+      }
+      .world-selector {
+        order: 2;
+        overflow-x: auto;
+        max-width: 100%;
+      }
+      .top-actions {
+        order: 3;
+      }
+      .bottom-layout {
+        flex-direction: column-reverse;
+        align-items: center;
+      }
+      .dashboard-panel, .webcam-container {
+        width: 100%;
+        max-width: 100%;
+      }
+      .webcam-container {
+        height: 140px;
+      }
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Garden Canvas -->
+  <canvas id="gardenCanvas"></canvas>
+
+  <!-- Atmospheric Vignette & Color Gradients -->
+  <div class="atmosphere-vignette"></div>
+  <div class="ambient-glow" id="ambientGlow"></div>
+
+  <!-- UI Overlay -->
+  <div class="ui-container">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      
+      <!-- Brand Block (Top Left) -->
+      <div class="brand-block glass-card ui-interactive">
+        <div class="brand-title-wrap">
+          <svg class="brand-icon" viewBox="0 0 24 24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          <h1 class="brand-title">ENCHANTED GARDEN</h1>
+        </div>
+        <span class="brand-subtitle">AI NATURE EXPERIENCE</span>
+      </div>
+
+      <!-- World Mode Selector (Top Center) -->
+      <nav class="world-selector ui-interactive" aria-label="Worlds">
+        <button class="world-btn sakura active" data-world="sakura" id="btnSakura">
+          <span class="world-emoji">🌸</span>
+          <span>Sakura Dreams</span>
+        </button>
+        <button class="world-btn butterfly" data-world="butterfly" id="btnButterfly">
+          <span class="world-emoji">🦋</span>
+          <span>Butterfly Paradise</span>
+        </button>
+        <button class="world-btn firefly" data-world="firefly" id="btnFirefly">
+          <span class="world-emoji">✨</span>
+          <span>Firefly Symphony</span>
+        </button>
+        <button class="world-btn bloom" data-world="bloom" id="btnBloom">
+          <span class="world-emoji">🌺</span>
+          <span>Mystic Bloom</span>
+        </button>
+      </nav>
+
+      <!-- Action Buttons (Top Right) -->
+      <div class="top-actions ui-interactive">
+        <button class="action-btn" id="btnBurstAction" title="Trigger Magic Burst (Spacebar / Open Palm)">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v3m0 12v3M3 12h3m12 0h3m-2.6-6.4-2.1 2.1m-8.6 8.6-2.1 2.1m0-12.8 2.1 2.1m8.6 8.6 2.1 2.1"/>
+          </svg>
+        </button>
+        <button class="action-btn" id="btnSoundToggle" title="Toggle Magical Chimes & Soundscape">
+          <svg id="soundSvg" viewBox="0 0 24 24">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <button class="action-btn" id="btnHelpToggle" title="Gesture Help & Shortcuts (?)">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </button>
+        <button class="action-btn" id="btnFullscreen" title="Toggle Fullscreen (F)">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- World Switch Announcement Banner -->
+    <div class="world-splash-banner" id="worldSplash">
+      <div class="world-splash-name" id="splashTitle">SAKURA DREAMS</div>
+      <div class="world-splash-desc" id="splashDesc">Luminous Cherry Blossom Canopy</div>
+    </div>
+
+    <!-- Bottom Layout: Dashboard (Left) & Camera Box (Right) -->
+    <div class="bottom-layout">
+
+      <!-- Glassmorphic Live Dashboard (Bottom Left) -->
+      <section class="dashboard-panel glass-card ui-interactive">
+        
+        <!-- Live Clock & Date -->
+        <div class="dashboard-header">
+          <div>
+            <div class="clock-display" id="clockDisplay">12:00:00 PM</div>
+            <div class="date-display" id="dateDisplay">Thursday, Nov 19, 2026</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="telemetry-label">ACTIVE REALM</span>
+            <div style="font-weight: 700; color: var(--color-sakura); font-size: 0.88rem;" id="activeRealmText">Sakura Dreams</div>
+          </div>
+        </div>
+
+        <!-- Gesture Recognition Badge -->
+        <div class="gesture-indicator-row">
+          <div class="gesture-label-group">
+            <div class="gesture-icon-badge" id="gestureIconBadge">⏳</div>
+            <div class="gesture-text-wrap">
+              <span class="gesture-title">DETECTED GESTURE</span>
+              <span class="gesture-value" id="gestureValueText">INITIALIZING TRACKER</span>
+            </div>
+          </div>
+          <span class="gesture-status-tag no-hand" id="gestureStatusTag">NO HAND</span>
+        </div>
+
+        <!-- Live Telemetry: Particles, FPS, Hand Scale Proxy -->
+        <div class="telemetry-grid">
+          <div class="telemetry-box">
+            <span class="telemetry-label">PARTICLES</span>
+            <span class="telemetry-val" id="particleCountVal">550</span>
+          </div>
+          <div class="telemetry-box">
+            <span class="telemetry-label">PERF FPS</span>
+            <span class="telemetry-val" id="fpsVal">60</span>
+          </div>
+          <div class="telemetry-box">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span class="telemetry-label">SCALE</span>
+              <span class="telemetry-val" style="font-size: 0.85rem;" id="scaleVal">1.00x</span>
+            </div>
+            <div class="scale-bar-wrap">
+              <div class="scale-bar-fill" id="scaleBarFill" style="width: 25%;"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Small Mirrored Webcam Skeleton Card (Bottom Right) -->
+      <div class="webcam-container ui-interactive" id="webcamContainer">
+        <video id="webcamVideo" playsinline autoplay muted></video>
+        <canvas id="skeletonCanvas"></canvas>
+        
+        <!-- Camera status pill -->
+        <div class="camera-badge">
+          <div class="status-dot loading" id="cameraStatusDot"></div>
+          <span id="cameraStatusText">Camera Loading...</span>
+        </div>
+
+        <!-- Camera denied/retry overlay (if blocked or offline) -->
+        <div class="cam-overlay-btn" id="cameraDeniedOverlay" style="display: none;">
+          <span>Camera stream offline</span>
+          <div class="action-pill" id="btnRequestCamera">Enable Webcam</div>
+          <span style="font-size: 0.65rem; color: var(--text-muted);">Mouse & Keys active</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Help & Gesture Modal Dialog -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span style="font-size: 1.4rem;">🌿</span>
+          <h2 class="modal-title">ENCHANTED GARDEN GUIDE</h2>
+        </div>
+        <button class="modal-close-btn" id="btnCloseHelp" title="Close guide">&times;</button>
+      </div>
+
+      <div class="guide-grid">
+        <div class="guide-card">
+          <span class="guide-icon">✊</span>
+          <div class="guide-info">
+            <strong>Closed Fist</strong>
+            <p>Cycle to the next magical world. Distinct edge-triggered action with debounce so holding never repeats.</p>
+          </div>
+        </div>
+
+        <div class="guide-card">
+          <span class="guide-icon">✋</span>
+          <div class="guide-info">
+            <strong>Open Palm</strong>
+            <p>Trigger a grand magical burst! Petals, butterflies, or fireflies surge off screen and gently glide back.</p>
+          </div>
+        </div>
+
+        <div class="guide-card">
+          <span class="guide-icon">🖐️</span>
+          <div class="guide-info">
+            <strong>Move Hand</strong>
+            <p>Naturally guides the focal center and wind currents of the active creation across the canvas.</p>
+          </div>
+        </div>
+
+        <div class="guide-card">
+          <span class="guide-icon">🔍</span>
+          <div class="guide-info">
+            <strong>Move Near / Far</strong>
+            <p>Move hand closer or farther from camera to smoothly scale the active creation between 0.5x and 2.5x.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="shortcut-legend">
+        <div class="shortcut-pill"><span class="kbd">Space</span> / <span class="kbd">Click</span> Magic Burst</div>
+        <div class="shortcut-pill"><span class="kbd">1</span>-<span class="kbd">4</span> Select World</div>
+        <div class="shortcut-pill"><span class="kbd">W</span> Next World</div>
+        <div class="shortcut-pill"><span class="kbd">[</span> <span class="kbd">]</span> Zoom Scale</div>
+        <div class="shortcut-pill"><span class="kbd">F</span> Fullscreen</div>
+        <div class="shortcut-pill"><span class="kbd">C</span> Toggle Camera</div>
+        <div class="shortcut-pill"><span class="kbd">M</span> Mute / Chimes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-pill" id="toastPill">Welcome to the Enchanted Garden</div>
+
+  <!-- ==========================================================================
+       Main Application Logic (MediaPipe Tasks Vision ESM + Canvas 2D Engine)
+       ========================================================================== -->
+  <script type="module">
+    import {
+      FilesetResolver,
+      HandLandmarker
+    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+    /* ==========================================================================
+       Global State & Telemetry
+       ========================================================================== */
+    const gardenCanvas = document.getElementById('gardenCanvas');
+    const ctx = gardenCanvas.getContext('2d', { alpha: false });
+
+    const skeletonCanvas = document.getElementById('skeletonCanvas');
+    const skelCtx = skeletonCanvas.getContext('2d');
+    const webcamVideo = document.getElementById('webcamVideo');
+
+    // UI Elements
+    const clockDisplay = document.getElementById('clockDisplay');
+    const dateDisplay = document.getElementById('dateDisplay');
+    const activeRealmText = document.getElementById('activeRealmText');
+    const gestureValueText = document.getElementById('gestureValueText');
+    const gestureIconBadge = document.getElementById('gestureIconBadge');
+    const gestureStatusTag = document.getElementById('gestureStatusTag');
+    const particleCountVal = document.getElementById('particleCountVal');
+    const fpsVal = document.getElementById('fpsVal');
+    const scaleVal = document.getElementById('scaleVal');
+    const scaleBarFill = document.getElementById('scaleBarFill');
+    const cameraStatusDot = document.getElementById('cameraStatusDot');
+    const cameraStatusText = document.getElementById('cameraStatusText');
+    const cameraDeniedOverlay = document.getElementById('cameraDeniedOverlay');
+    const ambientGlow = document.getElementById('ambientGlow');
+    const toastPill = document.getElementById('toastPill');
+
+    // Modal & Buttons
+    const helpModal = document.getElementById('helpModal');
+    const btnHelpToggle = document.getElementById('btnHelpToggle');
+    const btnCloseHelp = document.getElementById('btnCloseHelp');
+    const btnFullscreen = document.getElementById('btnFullscreen');
+    const btnSoundToggle = document.getElementById('btnSoundToggle');
+    const btnBurstAction = document.getElementById('btnBurstAction');
+    const btnRequestCamera = document.getElementById('btnRequestCamera');
+    const worldBtns = {
+      sakura: document.getElementById('btnSakura'),
+      butterfly: document.getElementById('btnButterfly'),
+      firefly: document.getElementById('btnFirefly'),
+      bloom: document.getElementById('btnBloom')
+    };
+
+    // Splash announcement
+    const worldSplash = document.getElementById('worldSplash');
+    const splashTitle = document.getElementById('splashTitle');
+    const splashDesc = document.getElementById('splashDesc');
+
+    let dpr = window.devicePixelRatio || 1;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    // Simulation tracking point (mirrored coordinates)
+    const focalCenter = {
+      x: width * 0.5,
+      y: height * 0.5,
+      targetX: width * 0.5,
+      targetY: height * 0.5,
+      scale: 1.0,
+      targetScale: 1.0,
+      active: false
+    };
+
+    // Current World Configuration
+    const WORLDS = ['sakura', 'butterfly', 'firefly', 'bloom'];
+    let currentWorldIndex = 0;
+    let currentWorld = WORLDS[currentWorldIndex];
+
+    const WORLD_META = {
+      sakura: {
+        name: "Sakura Dreams",
+        title: "SAKURA DREAMS",
+        desc: "Luminous Cherry Blossom Canopy",
+        color: "#ff9ebb",
+        bg: "radial-gradient(circle at 50% 45%, #220d20 0%, #0d0714 60%, #050208 100%)",
+        glow: "radial-gradient(circle at 50% 50%, rgba(255, 158, 187, 0.25) 0%, transparent 65%)"
+      },
+      butterfly: {
+        name: "Butterfly Paradise",
+        title: "BUTTERFLY PARADISE",
+        desc: "Flocking Luminous Winged Creatures",
+        color: "#4ef2bb",
+        bg: "radial-gradient(circle at 50% 45%, #08201a 0%, #06110f 60%, #020706 100%)",
+        glow: "radial-gradient(circle at 50% 50%, rgba(78, 242, 187, 0.22) 0%, transparent 65%)"
+      },
+      firefly: {
+        name: "Firefly Symphony",
+        title: "FIREFLY SYMPHONY",
+        desc: "Bioluminescent Constellations & Lanterns",
+        color: "#ffd166",
+        bg: "radial-gradient(circle at 50% 45%, #1f1708 0%, #0e0d0a 60%, #050406 100%)",
+        glow: "radial-gradient(circle at 50% 50%, rgba(255, 209, 102, 0.22) 0%, transparent 65%)"
+      },
+      bloom: {
+        name: "Mystic Bloom",
+        title: "MYSTIC BLOOM",
+        desc: "Sacred Multi-Tiered Unfurling Flower",
+        color: "#c084fc",
+        bg: "radial-gradient(circle at 50% 45%, #240b2e 0%, #0e0616 60%, #050209 100%)",
+        glow: "radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.24) 0%, transparent 65%)"
+      }
+    };
+
+    /* ==========================================================================
+       Interactive Web Audio Synthesizer (Generative Chimes & Soundscape)
+       ========================================================================== */
+    class MagicalAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = true; // start muted for polite autoplay compliance
+        this.isInitialized = false;
+      }
+
+      init() {
+        if (this.isInitialized) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+          this.isInitialized = true;
+        }
+      }
+
+      resume() {
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggleMute() {
+        this.init();
+        this.resume();
+        this.muted = !this.muted;
+        if (!this.muted) {
+          this.playChime(523.25); // C5 chime
+        }
+        return this.muted;
+      }
+
+      playTone(freq, type = 'sine', duration = 1.0, gainVal = 0.15) {
+        if (this.muted || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      }
+
+      playChime(baseFreq = 523.25) {
+        if (this.muted || !this.ctx) return;
+        const freqs = [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * 1.875, baseFreq * 2];
+        freqs.forEach((f, idx) => {
+          setTimeout(() => {
+            this.playTone(f, 'sine', 1.4, 0.08);
+          }, idx * 70);
+        });
+      }
+
+      playBurstSwoosh() {
+        if (this.muted || !this.ctx) return;
+        try {
+          // Play sweeping ethereal resonant chord
+          const notes = [440, 554.37, 659.25, 830.61, 987.77, 1318.51];
+          notes.forEach((f, i) => {
+            setTimeout(() => {
+              this.playTone(f, 'sine', 2.0, 0.07);
+            }, i * 40);
+          });
+        } catch(e) {}
+      }
+    }
+
+    const soundEngine = new MagicalAudioEngine();
+
+    /* ==========================================================================
+       Toast Helper
+       ========================================================================== */
+    let toastTimeout;
+    function showToast(text, duration = 2500) {
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastPill.textContent = text;
+      toastPill.classList.add('show');
+      toastTimeout = setTimeout(() => {
+        toastPill.classList.remove('show');
+      }, duration);
+    }
+
+    /* ==========================================================================
+       Canvas Sizing & High DPR Handling
+       ========================================================================== */
+    function resizeCanvas() {
+      dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+
+      gardenCanvas.width = width * dpr;
+      gardenCanvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Skeleton canvas
+      const skelRect = skeletonCanvas.getBoundingClientRect();
+      skeletonCanvas.width = (skelRect.width || 220) * dpr;
+      skeletonCanvas.height = (skelRect.height || 165) * dpr;
+      skelCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      if (!focalCenter.active) {
+        focalCenter.targetX = width * 0.5;
+        focalCenter.targetY = height * 0.5;
+      }
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    /* ==========================================================================
+       Live Clock & Date
+       ========================================================================== */
+    function updateClock() {
+      const now = new Date();
+      clockDisplay.textContent = now.toLocaleTimeString('en-US', { hour12: true });
+      dateDisplay.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /* ==========================================================================
+       PARTICLE SYSTEMS FOR THE FOUR DISTINCT WORLDS
+       ========================================================================== */
+
+    // Particle pool helper
+    const TWO_PI = Math.PI * 2;
+    function rand(min, max) { return min + Math.random() * (max - min); }
+
+    /* --------------------------------------------------------------------------
+       WORLD 1: SAKURA DREAMS
+       Realistic fluttering cherry blossom petals, swirling spiral winds, and
+       luminous blooming tree branches.
+       -------------------------------------------------------------------------- */
+    class SakuraWorld {
+      constructor() {
+        this.petals = [];
+        this.maxPetals = 520;
+        this.pollen = [];
+        this.maxPollen = 120;
+        this.branchAngles = [0, 0.7, 1.4, 2.2, 3.1, 4.0, 4.8, 5.6];
+        this.init();
+      }
+
+      init() {
+        this.petals = [];
+        for (let i = 0; i < this.maxPetals; i++) {
+          this.petals.push(this.createPetal(true));
+        }
+        this.pollen = [];
+        for (let i = 0; i < this.maxPollen; i++) {
+          this.pollen.push({
+            x: rand(0, width),
+            y: rand(0, height),
+            vx: rand(-0.3, 0.3),
+            vy: rand(-0.8, -0.2),
+            size: rand(1.2, 2.5),
+            alpha: rand(0.3, 0.8),
+            pulseSpeed: rand(1.5, 3.5),
+            phase: rand(0, TWO_PI)
+          });
+        }
+      }
+
+      createPetal(randomPos = false) {
+        const angle = rand(0, TWO_PI);
+        const dist = randomPos ? rand(20, Math.min(width, height) * 0.6) : rand(10, 80);
+        return {
+          x: randomPos ? width * 0.5 + Math.cos(angle) * dist : focalCenter.x + Math.cos(angle) * dist,
+          y: randomPos ? height * 0.5 + Math.sin(angle) * dist : focalCenter.y + Math.sin(angle) * dist,
+          vx: rand(-1, 1),
+          vy: rand(0.5, 2.2),
+          size: rand(7, 14),
+          rotation: rand(0, TWO_PI),
+          rotSpeed: rand(-0.03, 0.03),
+          flutter: rand(0, TWO_PI),
+          flutterSpeed: rand(0.04, 0.08),
+          pitch: rand(0, TWO_PI),
+          pitchSpeed: rand(0.02, 0.06),
+          color: Math.random() > 0.35 
+            ? { r: 255, g: 183, b: 197, a: rand(0.65, 0.95) } 
+            : { r: 255, g: 220, b: 230, a: rand(0.7, 0.98) },
+          orbitAngle: angle,
+          orbitDist: dist,
+          orbitSpeed: rand(0.004, 0.012) * (Math.random() > 0.5 ? 1 : -1),
+          isBursting: false,
+          burstSpeed: 0
+        };
+      }
+
+      triggerBurst() {
+        for (let p of this.petals) {
+          p.isBursting = true;
+          const dx = p.x - focalCenter.x;
+          const dy = p.y - focalCenter.y;
+          const angle = Math.atan2(dy, dx) + rand(-0.4, 0.4);
+          p.burstSpeed = rand(18, 38) * focalCenter.scale;
+          p.vx = Math.cos(angle) * p.burstSpeed;
+          p.vy = Math.sin(angle) * p.burstSpeed;
+          p.rotSpeed = rand(-0.15, 0.15);
+        }
+      }
+
+      update(time, scale) {
+        const cx = focalCenter.x;
+        const cy = focalCenter.y;
+
+        for (let p of this.petals) {
+          p.rotation += p.rotSpeed;
+          p.flutter += p.flutterSpeed;
+          p.pitch += p.pitchSpeed;
+
+          if (p.isBursting) {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vx *= 0.95;
+            p.vy *= 0.95;
+            p.burstSpeed *= 0.95;
+            if (p.burstSpeed < 1.5) {
+              p.isBursting = false;
+            }
+          } else {
+            // Calm swirling vortex around hand center
+            p.orbitAngle += p.orbitSpeed;
+            const targetX = cx + Math.cos(p.orbitAngle) * (p.orbitDist * scale) + Math.sin(p.flutter) * 18;
+            const targetY = cy + Math.sin(p.orbitAngle) * (p.orbitDist * scale * 0.75) + p.vy * 4;
+
+            p.x += (targetX - p.x) * 0.035;
+            p.y += p.vy * 0.85 + Math.sin(p.flutter * 0.5) * 0.6;
+
+            // Natural gravity wind
+            p.y += 0.8;
+            p.x += Math.cos(time * 0.001 + p.flutter) * 0.8;
+
+            // Screen wrap / recycling
+            if (p.y > height + 40 || p.x < -60 || p.x > width + 60) {
+              p.y = rand(-40, -10);
+              p.x = rand(0, width);
+              p.orbitDist = rand(30, Math.min(width, height) * 0.55);
+              p.orbitAngle = rand(0, TWO_PI);
+            }
+          }
+        }
+
+        // Ambient pollen
+        for (let s of this.pollen) {
+          s.x += s.vx;
+          s.y += s.vy;
+          if (s.y < -10) s.y = height + 10;
+          if (s.x < -10) s.x = width + 10;
+          if (s.x > width + 10) s.x = -10;
+        }
+      }
+
+      draw(ctx, time, scale) {
+        const cx = focalCenter.x;
+        const cy = focalCenter.y;
+
+        // Draw ethereal luminous cherry tree canopy spirals
+        ctx.save();
+        ctx.lineWidth = 1.5 * scale;
+        for (let i = 0; i < this.branchAngles.length; i++) {
+          const baseAng = this.branchAngles[i] + Math.sin(time * 0.0006 + i) * 0.15;
+          const branchLen = 140 * scale;
+          
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          const cp1x = cx + Math.cos(baseAng - 0.4) * (branchLen * 0.5);
+          const cp1y = cy + Math.sin(baseAng - 0.4) * (branchLen * 0.5);
+          const endX = cx + Math.cos(baseAng) * branchLen;
+          const endY = cy + Math.sin(baseAng) * branchLen;
+          ctx.quadraticCurveTo(cp1x, cp1y, endX, endY);
+          
+          ctx.strokeStyle = `rgba(255, 183, 197, ${0.15 + Math.sin(time * 0.002 + i) * 0.08})`;
+          ctx.stroke();
+
+          // Blossoming node dot
+          ctx.beginPath();
+          ctx.arc(endX, endY, 3.5 * scale, 0, TWO_PI);
+          ctx.fillStyle = `rgba(255, 230, 240, 0.6)`;
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // Draw Petals with 3D roll and pitch simulation
+        for (let p of this.petals) {
+          const pitchScale = Math.abs(Math.cos(p.pitch));
+          const flutterOffset = Math.sin(p.flutter) * 3;
+          const pSize = p.size * scale;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.scale(1, Math.max(0.18, pitchScale));
+
+          // Draw custom Cherry Blossom Petal with heart notch at tip
+          ctx.beginPath();
+          ctx.moveTo(0, -pSize);
+          ctx.bezierCurveTo(pSize * 0.65, -pSize * 0.85, pSize * 0.85, -pSize * 0.15, pSize * 0.4, pSize * 0.8);
+          ctx.bezierCurveTo(pSize * 0.2, pSize * 1.05, -pSize * 0.2, pSize * 1.05, -pSize * 0.4, pSize * 0.8);
+          ctx.bezierCurveTo(-pSize * 0.85, -pSize * 0.15, -pSize * 0.65, -pSize * 0.85, 0, -pSize);
+          ctx.closePath();
+
+          ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${p.color.a})`;
+          ctx.fill();
+
+          // Soft central petal vein
+          ctx.beginPath();
+          ctx.moveTo(0, -pSize * 0.6);
+          ctx.lineTo(0, pSize * 0.6);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${p.color.a * 0.4})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        // Draw sparkling pollen
+        ctx.save();
+        for (let s of this.pollen) {
+          const alpha = s.alpha * (0.6 + 0.4 * Math.sin(time * 0.003 * s.pulseSpeed + s.phase));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size * scale, 0, TWO_PI);
+          ctx.fillStyle = `rgba(255, 240, 245, ${alpha})`;
+          ctx.shadowColor = "rgba(255, 183, 197, 0.8)";
+          ctx.shadowBlur = 8;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      getCount() { return this.petals.length + this.pollen.length; }
+    }
+
+    /* --------------------------------------------------------------------------
+       WORLD 2: BUTTERFLY PARADISE
+       Stylized luminous animated butterflies flapping in graceful murmuration,
+       leaving vibrant glowing pastel trails.
+       -------------------------------------------------------------------------- */
+    class ButterflyWorld {
+      constructor() {
+        this.butterflies = [];
+        this.maxButterflies = 64;
+        this.trailPoints = [];
+        this.init();
+      }
+
+      init() {
+        this.butterflies = [];
+        const colors = [
+          { r: 78, g: 242, b: 187, name: 'mint' },     // Mint green
+          { r: 192, g: 132, b: 252, name: 'lavender' }, // Lavender
+          { r: 56, g: 189, b: 248, name: 'cyan' },     // Luminous sky blue
+          { r: 251, g: 113, b: 133, name: 'rose' }     // Rose
+        ];
+
+        for (let i = 0; i < this.maxButterflies; i++) {
+          const col = colors[i % colors.length];
+          const angle = (i / this.maxButterflies) * TWO_PI;
+          const radius = rand(40, 240);
+
+          this.butterflies.push({
+            x: focalCenter.x + Math.cos(angle) * radius,
+            y: focalCenter.y + Math.sin(angle) * radius,
+            vx: rand(-1.5, 1.5),
+            vy: rand(-1.5, 1.5),
+            heading: angle + Math.PI * 0.5,
+            size: rand(11, 20),
+            color: col,
+            orbitRadius: radius,
+            orbitSpeed: rand(0.008, 0.02) * (i % 2 === 0 ? 1 : -1),
+            orbitAngle: angle,
+            flapPhase: rand(0, TWO_PI),
+            flapSpeed: rand(0.18, 0.32),
+            trail: [],
+            isBursting: false,
+            burstSpeed: 0
+          });
+        }
+      }
+
+      triggerBurst() {
+        for (let b of this.butterflies) {
+          b.isBursting = true;
+          const dx = b.x - focalCenter.x;
+          const dy = b.y - focalCenter.y;
+          const angle = Math.atan2(dy, dx) + rand(-0.35, 0.35);
+          b.burstSpeed = rand(22, 42) * focalCenter.scale;
+          b.vx = Math.cos(angle) * b.burstSpeed;
+          b.vy = Math.sin(angle) * b.burstSpeed;
+          b.flapSpeed = rand(0.4, 0.65); // hyper flapping in burst
+        }
+      }
+
+      update(time, scale) {
+        const cx = focalCenter.x;
+        const cy = focalCenter.y;
+
+        for (let b of this.butterflies) {
+          b.flapPhase += b.flapSpeed;
+
+          if (b.isBursting) {
+            b.x += b.vx;
+            b.y += b.vy;
+            b.vx *= 0.96;
+            b.vy *= 0.96;
+            b.burstSpeed *= 0.96;
+            b.heading = Math.atan2(b.vy, b.vx) + Math.PI * 0.5;
+
+            if (b.burstSpeed < 2.0) {
+              b.isBursting = false;
+              b.flapSpeed = rand(0.18, 0.32);
+            }
+          } else {
+            // Smooth circular / figure-8 murmuration around hand center
+            b.orbitAngle += b.orbitSpeed;
+            const targetX = cx + Math.cos(b.orbitAngle) * (b.orbitRadius * scale) + Math.sin(time * 0.002 + b.orbitRadius) * 25;
+            const targetY = cy + Math.sin(b.orbitAngle * 1.5) * (b.orbitRadius * 0.75 * scale) + Math.cos(time * 0.0025 + b.orbitRadius) * 20;
+
+            const targetVx = (targetX - b.x) * 0.05;
+            const targetVy = (targetY - b.y) * 0.05;
+
+            b.vx += (targetVx - b.vx) * 0.1;
+            b.vy += (targetVy - b.vy) * 0.1;
+
+            b.x += b.vx;
+            b.y += b.vy;
+
+            // Heading smoothly aligned with velocity
+            const currentSpeed = Math.hypot(b.vx, b.vy);
+            if (currentSpeed > 0.2) {
+              const targetHeading = Math.atan2(b.vy, b.vx) + Math.PI * 0.5;
+              let diff = targetHeading - b.heading;
+              while (diff < -Math.PI) diff += TWO_PI;
+              while (diff > Math.PI) diff -= TWO_PI;
+              b.heading += diff * 0.12;
+            }
+          }
+
+          // Record delicate wingtip ribbon trails
+          b.trail.push({
+            x: b.x,
+            y: b.y,
+            alpha: 0.85,
+            size: b.size * 0.35 * scale
+          });
+
+          if (b.trail.length > 14) {
+            b.trail.shift();
+          }
+
+          for (let t of b.trail) {
+            t.alpha *= 0.91;
+          }
+        }
+      }
+
+      draw(ctx, time, scale) {
+        // Draw trailing luminous stardust ribbons
+        ctx.save();
+        for (let b of this.butterflies) {
+          if (b.trail.length > 1) {
+            for (let i = 1; i < b.trail.length; i++) {
+              const ptPrev = b.trail[i - 1];
+              const ptCurr = b.trail[i];
+              if (ptCurr.alpha < 0.05) continue;
+
+              ctx.beginPath();
+              ctx.moveTo(ptPrev.x, ptPrev.y);
+              ctx.lineTo(ptCurr.x, ptCurr.y);
+              ctx.strokeStyle = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, ${ptCurr.alpha * 0.55})`;
+              ctx.lineWidth = ptCurr.size;
+              ctx.lineCap = 'round';
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.restore();
+
+        // Draw animated butterflies with 3D wing-folding perspective
+        for (let b of this.butterflies) {
+          const wingFlap = Math.cos(b.flapPhase); // -1 to 1 wing flap angle
+          const wingSpan = Math.abs(wingFlap);
+          const bSize = b.size * scale;
+
+          ctx.save();
+          ctx.translate(b.x, b.y);
+          ctx.rotate(b.heading);
+
+          // Glowing aura around butterfly
+          ctx.beginPath();
+          ctx.arc(0, 0, bSize * 1.5, 0, TWO_PI);
+          ctx.fillStyle = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, 0.12)`;
+          ctx.fill();
+
+          // Left Forewing & Hindwing
+          ctx.save();
+          ctx.scale(Math.max(0.15, wingSpan), 1);
+
+          // Forewing Left
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.bezierCurveTo(-bSize * 0.8, -bSize * 1.2, -bSize * 1.6, -bSize * 0.8, -bSize * 1.2, 0);
+          ctx.bezierCurveTo(-bSize * 0.9, bSize * 0.4, -bSize * 0.3, bSize * 0.2, 0, 0);
+          ctx.fillStyle = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, 0.85)`;
+          ctx.shadowColor = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, 0.9)`;
+          ctx.shadowBlur = 10;
+          ctx.fill();
+
+          // Hindwing Left
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.bezierCurveTo(-bSize * 0.9, bSize * 0.3, -bSize * 1.1, bSize * 1.1, -bSize * 0.5, bSize * 1.2);
+          ctx.bezierCurveTo(-bSize * 0.2, bSize * 1.1, -bSize * 0.1, bSize * 0.5, 0, 0);
+          ctx.fillStyle = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, 0.65)`;
+          ctx.fill();
+
+          // Right Forewing & Hindwing
+          ctx.restore();
+          ctx.save();
+          ctx.scale(-Math.max(0.15, wingSpan), 1);
+
+          // Forewing Right
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.bezierCurveTo(-bSize * 0.8, -bSize * 1.2, -bSize * 1.6, -bSize * 0.8, -bSize * 1.2, 0);
+          ctx.bezierCurveTo(-bSize * 0.9, bSize * 0.4, -bSize * 0.3, bSize * 0.2, 0, 0);
+          ctx.fillStyle = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, 0.85)`;
+          ctx.fill();
+
+          // Hindwing Right
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.bezierCurveTo(-bSize * 0.9, bSize * 0.3, -bSize * 1.1, bSize * 1.1, -bSize * 0.5, bSize * 1.2);
+          ctx.bezierCurveTo(-bSize * 0.2, bSize * 1.1, -bSize * 0.1, bSize * 0.5, 0, 0);
+          ctx.fillStyle = `rgba(${b.color.r}, ${b.color.g}, ${b.color.b}, 0.65)`;
+          ctx.fill();
+          ctx.restore();
+
+          // Slender body & glowing head
+          ctx.beginPath();
+          ctx.ellipse(0, 0, bSize * 0.12, bSize * 0.6, 0, 0, TWO_PI);
+          ctx.fillStyle = "#ffffff";
+          ctx.fill();
+
+          // Antennas
+          ctx.beginPath();
+          ctx.moveTo(-bSize * 0.05, -bSize * 0.5);
+          ctx.quadraticCurveTo(-bSize * 0.3, -bSize * 0.9, -bSize * 0.4, -bSize * 1.1);
+          ctx.moveTo(bSize * 0.05, -bSize * 0.5);
+          ctx.quadraticCurveTo(bSize * 0.3, -bSize * 0.9, bSize * 0.4, -bSize * 1.1);
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.restore();
+        }
+      }
+
+      getCount() {
+        let trailCount = 0;
+        for (let b of this.butterflies) trailCount += b.trail.length;
+        return this.butterflies.length + trailCount;
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       WORLD 3: FIREFLY SYMPHONY
+       Hundreds of organic glowing golden and turquoise fireflies pulsing,
+       breathing, and forming dynamic bioluminescent constellations.
+       -------------------------------------------------------------------------- */
+    class FireflyWorld {
+      constructor() {
+        this.fireflies = [];
+        this.maxFireflies = 480;
+        this.init();
+      }
+
+      init() {
+        this.fireflies = [];
+        for (let i = 0; i < this.maxFireflies; i++) {
+          const isGold = Math.random() > 0.45;
+          const color = isGold 
+            ? { r: 255, g: 209, b: 102 }  // Warm Amber Gold
+            : { r: 34, g: 211, b: 238 };  // Neon Turquoise Cyan
+
+          this.fireflies.push({
+            x: rand(0, width),
+            y: rand(0, height),
+            vx: rand(-0.8, 0.8),
+            vy: rand(-0.8, 0.8),
+            baseRadius: rand(2.2, 5.0),
+            color: color,
+            pulseSpeed: rand(1.2, 3.2),
+            phase: rand(0, TWO_PI),
+            wanderFreq: rand(0.001, 0.003),
+            id: i,
+            isBursting: false,
+            burstSpeed: 0
+          });
+        }
+      }
+
+      triggerBurst() {
+        for (let f of this.fireflies) {
+          f.isBursting = true;
+          const dx = f.x - focalCenter.x;
+          const dy = f.y - focalCenter.y;
+          const angle = Math.atan2(dy, dx) + rand(-0.3, 0.3);
+          f.burstSpeed = rand(20, 44) * focalCenter.scale;
+          f.vx = Math.cos(angle) * f.burstSpeed;
+          f.vy = Math.sin(angle) * f.burstSpeed;
+        }
+      }
+
+      update(time, scale) {
+        const cx = focalCenter.x;
+        const cy = focalCenter.y;
+
+        for (let f of this.fireflies) {
+          if (f.isBursting) {
+            f.x += f.vx;
+            f.y += f.vy;
+            f.vx *= 0.95;
+            f.vy *= 0.95;
+            f.burstSpeed *= 0.95;
+            if (f.burstSpeed < 1.2) {
+              f.isBursting = false;
+            }
+          } else {
+            // Harmonic sinusoidal organic wandering
+            const noiseX = Math.cos(time * f.wanderFreq + f.id) * 0.45;
+            const noiseY = Math.sin(time * (f.wanderFreq * 1.3) + f.id * 1.5) * 0.45;
+
+            // Gentle gravity well towards hand center
+            const dx = cx - f.x;
+            const dy = cy - f.y;
+            const dist = Math.hypot(dx, dy);
+            const pull = Math.min(1.8, (220 * scale) / Math.max(40, dist));
+
+            f.vx = f.vx * 0.96 + (noiseX + (dx / dist) * pull * 0.08);
+            f.vy = f.vy * 0.96 + (noiseY + (dy / dist) * pull * 0.08);
+
+            f.x += f.vx;
+            f.y += f.vy;
+
+            // Soft screen boundary wrapping
+            if (f.x < -40) f.x = width + 40;
+            if (f.x > width + 40) f.x = -40;
+            if (f.y < -40) f.y = height + 40;
+            if (f.y > height + 40) f.y = -40;
+          }
+        }
+      }
+
+      draw(ctx, time, scale) {
+        // Subtle constellation threads between nearby fireflies
+        ctx.save();
+        const connectDist = 65 * scale;
+        ctx.lineWidth = 0.8;
+
+        // Sample a subset for 60fps performance
+        const step = 4;
+        for (let i = 0; i < this.fireflies.length; i += step) {
+          const f1 = this.fireflies[i];
+          for (let j = i + step; j < this.fireflies.length; j += step * 2) {
+            const f2 = this.fireflies[j];
+            const dist = Math.hypot(f1.x - f2.x, f1.y - f2.y);
+            if (dist < connectDist) {
+              const alpha = (1 - dist / connectDist) * 0.28;
+              ctx.beginPath();
+              ctx.moveTo(f1.x, f1.y);
+              ctx.lineTo(f2.x, f2.y);
+              ctx.strokeStyle = `rgba(${f1.color.r}, ${f1.color.g}, ${f1.color.b}, ${alpha})`;
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.restore();
+
+        // Draw breathing bioluminescent fireflies
+        for (let f of this.fireflies) {
+          // Asynchronous deep biological breathing curve
+          const breath = Math.pow(Math.max(0, Math.sin(time * 0.002 * f.pulseSpeed + f.phase)), 3.0);
+          const currentAlpha = 0.15 + breath * 0.85;
+          const glowRadius = (f.baseRadius * 3.5 + breath * 12) * scale;
+          const coreRadius = (f.baseRadius * (0.8 + breath * 0.6)) * scale;
+
+          // Outer soft glow halo
+          const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, glowRadius);
+          grad.addColorStop(0, `rgba(${f.color.r}, ${f.color.g}, ${f.color.b}, ${currentAlpha * 0.7})`);
+          grad.addColorStop(0.4, `rgba(${f.color.r}, ${f.color.g}, ${f.color.b}, ${currentAlpha * 0.25})`);
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, glowRadius, 0, TWO_PI);
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // Intense luminous central core
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, coreRadius, 0, TWO_PI);
+          ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`;
+          ctx.fill();
+        }
+      }
+
+      getCount() { return this.fireflies.length; }
+    }
+
+    /* --------------------------------------------------------------------------
+       WORLD 4: MYSTIC BLOOM
+       Intricate glowing sacred floral mandala with multi-tiered unfurling petals,
+       breathing core, and orbiting stardust pollen.
+       -------------------------------------------------------------------------- */
+    class MysticBloomWorld {
+      constructor() {
+        this.pollen = [];
+        this.maxPollen = 280;
+        this.bloomAngle = 0;
+        this.bloomSpread = 1.0;
+        this.targetSpread = 1.0;
+        this.isBursting = false;
+        this.burstProgress = 0;
+        this.init();
+      }
+
+      init() {
+        this.pollen = [];
+        for (let i = 0; i < this.maxPollen; i++) {
+          const angle = rand(0, TWO_PI);
+          const dist = rand(30, 220);
+          this.pollen.push({
+            angle: angle,
+            dist: dist,
+            speed: rand(0.008, 0.02) * (i % 2 === 0 ? 1 : -1),
+            size: rand(1.5, 3.5),
+            color: Math.random() > 0.4 
+              ? { r: 192, g: 132, b: 252 } // Luminous Orchid
+              : { r: 45, g: 212, b: 191 }, // Turquoise Stamen
+            phase: rand(0, TWO_PI),
+            burstDist: 0
+          });
+        }
+      }
+
+      triggerBurst() {
+        this.isBursting = true;
+        this.burstProgress = 1.0;
+        for (let p of this.pollen) {
+          p.burstDist = rand(350, 750) * focalCenter.scale;
+        }
+      }
+
+      update(time, scale) {
+        this.bloomAngle += 0.004;
+
+        if (this.isBursting) {
+          this.burstProgress -= 0.018;
+          if (this.burstProgress <= 0) {
+            this.burstProgress = 0;
+            this.isBursting = false;
+          }
+        }
+
+        // Target bloom spread influenced by breathing and scale
+        this.targetSpread = 0.85 + Math.sin(time * 0.0018) * 0.25;
+        this.bloomSpread += (this.targetSpread - this.bloomSpread) * 0.05;
+
+        // Orbiting pollen
+        for (let p of this.pollen) {
+          p.angle += p.speed;
+        }
+      }
+
+      draw(ctx, time, scale) {
+        const cx = focalCenter.x;
+        const cy = focalCenter.y;
+        const effectiveSpread = this.bloomSpread + (this.burstProgress * 3.5);
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Petal Tiers Configuration (Sacred Geometry Fibonacci Array)
+        const tiers = [
+          { count: 18, radius: 150 * scale * effectiveSpread, width: 34 * scale, length: 85 * scale, color: 'rgba(147, 51, 234, 0.55)', rim: '#c084fc' }, // Outer Tier
+          { count: 14, radius: 105 * scale * effectiveSpread, width: 28 * scale, length: 70 * scale, color: 'rgba(244, 63, 94, 0.65)', rim: '#f43f5e' },  // Middle Tier
+          { count: 10, radius: 68 * scale * effectiveSpread, width: 22 * scale, length: 50 * scale, color: 'rgba(216, 180, 254, 0.75)', rim: '#ffffff' }, // Inner Tier
+          { count: 7,  radius: 35 * scale * effectiveSpread, width: 14 * scale, length: 32 * scale, color: 'rgba(45, 212, 191, 0.85)', rim: '#5eead4' }   // Core Tier
+        ];
+
+        // Draw Petal Tiers
+        tiers.forEach((tier, tIdx) => {
+          const tierRot = this.bloomAngle * (tIdx % 2 === 0 ? 1 : -1) + (tIdx * 0.4);
+          for (let i = 0; i < tier.count; i++) {
+            const pAngle = tierRot + (i / tier.count) * TWO_PI;
+            ctx.save();
+            ctx.rotate(pAngle);
+
+            const pLen = tier.length;
+            const pWid = tier.width;
+
+            // Draw curved sacred lotus petal
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(pWid, pLen * 0.35, pWid * 0.8, pLen * 0.85, 0, pLen);
+            ctx.bezierCurveTo(-pWid * 0.8, pLen * 0.85, -pWid, pLen * 0.35, 0, 0);
+            ctx.closePath();
+
+            ctx.fillStyle = tier.color;
+            ctx.shadowColor = tier.rim;
+            ctx.shadowBlur = 12;
+            ctx.fill();
+
+            // Glowing edge highlight
+            ctx.strokeStyle = tier.rim;
+            ctx.lineWidth = 1.2 * scale;
+            ctx.stroke();
+
+            // Luminous central petal rib
+            ctx.beginPath();
+            ctx.moveTo(0, 5);
+            ctx.lineTo(0, pLen * 0.85);
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.restore();
+          }
+        });
+
+        // Glowing Pulsing Stamen Core
+        const coreRadius = (20 + Math.sin(time * 0.003) * 5) * scale;
+        const coreGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, coreRadius * 2.2);
+        coreGrad.addColorStop(0, '#ffffff');
+        coreGrad.addColorStop(0.3, '#fde047');
+        coreGrad.addColorStop(0.7, '#f43f5e');
+        coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.beginPath();
+        ctx.arc(0, 0, coreRadius * 2.2, 0, TWO_PI);
+        ctx.fillStyle = coreGrad;
+        ctx.fill();
+
+        // Radiating stamen tentacles
+        const stamenCount = 12;
+        for (let i = 0; i < stamenCount; i++) {
+          const sAngle = (i / stamenCount) * TWO_PI + time * 0.002;
+          const sLen = (28 + Math.sin(time * 0.004 + i) * 6) * scale;
+          const tipX = Math.cos(sAngle) * sLen;
+          const tipY = Math.sin(sAngle) * sLen;
+
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(tipX, tipY);
+          ctx.strokeStyle = "rgba(253, 224, 71, 0.85)";
+          ctx.lineWidth = 1.5 * scale;
+          ctx.stroke();
+
+          // Golden pollen tip
+          ctx.beginPath();
+          ctx.arc(tipX, tipY, 3.2 * scale, 0, TWO_PI);
+          ctx.fillStyle = "#ffffff";
+          ctx.fill();
+        }
+
+        // Draw orbiting swirling stardust pollen
+        for (let p of this.pollen) {
+          const curDist = (p.dist * scale * effectiveSpread) + (p.burstDist * this.burstProgress);
+          const px = Math.cos(p.angle) * curDist;
+          const py = Math.sin(p.angle) * curDist;
+          const pAlpha = 0.4 + 0.6 * Math.sin(time * 0.004 + p.phase);
+
+          ctx.beginPath();
+          ctx.arc(px, py, p.size * scale, 0, TWO_PI);
+          ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${pAlpha})`;
+          ctx.shadowColor = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.9)`;
+          ctx.shadowBlur = 8;
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      getCount() {
+        return 49 + this.pollen.length; // 49 petals & stamens + pollen
+      }
+    }
+
+    /* ==========================================================================
+       Instantiate Worlds Engine
+       ========================================================================== */
+    const worlds = {
+      sakura: new SakuraWorld(),
+      butterfly: new ButterflyWorld(),
+      firefly: new FireflyWorld(),
+      bloom: new MysticBloomWorld()
+    };
+
+    /* ==========================================================================
+       World Switch & Burst Dispatcher
+       ========================================================================== */
+    function switchWorld(targetWorldId) {
+      if (!WORLDS.includes(targetWorldId)) return;
+      currentWorld = targetWorldId;
+      currentWorldIndex = WORLDS.indexOf(targetWorldId);
+
+      // Update Nav buttons
+      Object.keys(worldBtns).forEach(id => {
+        if (id === currentWorld) {
+          worldBtns[id].classList.add('active');
+        } else {
+          worldBtns[id].classList.remove('active');
+        }
+      });
+
+      const meta = WORLD_META[currentWorld];
+      activeRealmText.textContent = meta.name;
+      activeRealmText.style.color = meta.color;
+      gardenCanvas.style.background = meta.bg;
+      ambientGlow.style.background = meta.glow;
+
+      // Splash banner
+      splashTitle.textContent = meta.title;
+      splashDesc.textContent = meta.desc;
+      worldSplash.classList.add('show');
+      setTimeout(() => {
+        worldSplash.classList.remove('show');
+      }, 1400);
+
+      // Play harmonic chime
+      soundEngine.playChime(currentWorldIndex === 0 ? 523.25 : currentWorldIndex === 1 ? 587.33 : currentWorldIndex === 2 ? 659.25 : 783.99);
+
+      showToast(`Entering Realm: ${meta.name}`);
+    }
+
+    function switchWorldNext() {
+      const nextIdx = (currentWorldIndex + 1) % WORLDS.length;
+      switchWorld(WORLDS[nextIdx]);
+    }
+
+    function triggerMagicalBurst() {
+      worlds[currentWorld].triggerBurst();
+      soundEngine.playBurstSwoosh();
+
+      // UI pulse tag
+      gestureStatusTag.textContent = "BURST TRIGGERED";
+      gestureStatusTag.className = "gesture-status-tag active-burst";
+      setTimeout(() => {
+        if (gestureStatusTag.textContent === "BURST TRIGGERED") {
+          gestureStatusTag.textContent = "TRACKING";
+          gestureStatusTag.className = "gesture-status-tag";
+        }
+      }, 900);
+
+      showToast("✨ Magical Burst Unleashed!");
+    }
+
+    // Attach Nav button clicks
+    Object.keys(worldBtns).forEach(id => {
+      worldBtns[id].addEventListener('click', () => switchWorld(id));
+    });
+
+    btnBurstAction.addEventListener('click', () => triggerMagicalBurst());
+
+    /* ==========================================================================
+       MEDIAPIPE HAND TRACKER & ROBUST GESTURE RECOGNITION
+       ========================================================================== */
+    let handLandmarker = null;
+    let cameraStream = null;
+    let lastVideoTime = -1;
+
+    // Gesture State Machine & Cooldowns
+    let lastGesture = 'NONE';
+    let isFistHeld = false;
+    let isOpenPalmHeld = false;
+    let lastFistTriggerTime = 0;
+    let lastBurstTriggerTime = 0;
+    const FIST_COOLDOWN = 800; // ms between cycle triggers
+    const BURST_COOLDOWN = 1000; // ms between burst triggers
+
+    // Skeleton Bone Connections (MediaPipe Hand 21 Landmark topology)
+    const HAND_CONNECTIONS = [
+      // Thumb
+      [0, 1], [1, 2], [2, 3], [3, 4],
+      // Index
+      [0, 5], [5, 6], [6, 7], [7, 8],
+      // Middle
+      [5, 9], [9, 10], [10, 11], [11, 12],
+      // Ring
+      [9, 13], [13, 14], [14, 15], [15, 16],
+      // Pinky
+      [13, 17], [17, 18], [18, 19], [19, 20],
+      // Palm Base
+      [0, 17]
+    ];
+
+    async function initMediaPipeHandTracker() {
+      cameraStatusDot.className = "status-dot loading";
+      cameraStatusText.textContent = "Loading AI Model...";
+
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+        );
+
+        // Prefer GPU inference with automatic fallback to CPU
+        try {
+          handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            baseOptions: {
+              modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+              delegate: "GPU"
+            },
+            runningMode: "VIDEO",
+            numHands: 1
+          });
+          console.log("[MediaPipe] Initialized with GPU delegate");
+        } catch (gpuErr) {
+          console.warn("[MediaPipe] GPU initialization failed, retrying CPU delegate...", gpuErr);
+          handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            baseOptions: {
+              modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+              delegate: "CPU"
+            },
+            runningMode: "VIDEO",
+            numHands: 1
+          });
+          console.log("[MediaPipe] Initialized with CPU delegate");
+        }
+
+        cameraStatusText.textContent = "Requesting Webcam...";
+        await startWebcam();
+
+      } catch (err) {
+        console.error("[MediaPipe / Camera Error]", err);
+        handleCameraFailure(err.message || "Model failed to load");
+      }
+    }
+
+    async function startWebcam() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: "user"
+          },
+          audio: false
+        });
+
+        cameraStream = stream;
+        webcamVideo.srcObject = stream;
+        await webcamVideo.play();
+
+        cameraStatusDot.className = "status-dot active";
+        cameraStatusText.textContent = "AI Tracker Active";
+        cameraDeniedOverlay.style.display = "none";
+        showToast("Webcam connected! Show hand to interact 🌿");
+
+      } catch (camErr) {
+        console.warn("[Camera Stream Denied or Unavailable]", camErr);
+        handleCameraFailure("Webcam denied / unavailable");
+      }
+    }
+
+    function handleCameraFailure(reason) {
+      cameraStatusDot.className = "status-dot error";
+      cameraStatusText.textContent = "Offline (Mouse Active)";
+      cameraDeniedOverlay.style.display = "flex";
+      gestureValueText.textContent = "MOUSE / KEYS ACTIVE";
+      gestureIconBadge.textContent = "🖱️";
+      gestureStatusTag.textContent = "STANDBY";
+      gestureStatusTag.className = "gesture-status-tag no-hand";
+    }
+
+    btnRequestCamera.addEventListener('click', () => {
+      startWebcam();
+    });
+
+    /* --------------------------------------------------------------------------
+       Gesture Recognition & Landmark Processing
+       -------------------------------------------------------------------------- */
+    function processHandLandmarks(landmarks, now) {
+      const lm = landmarks[0];
+      if (!lm || lm.length < 21) {
+        handleNoHandDetected();
+        return;
+      }
+
+      focalCenter.active = true;
+
+      // 1. Mirrored coordinates calculation
+      // Wrist is lm[0], Middle MCP is lm[9]
+      const palmX = (lm[0].x + lm[9].x) * 0.5;
+      const palmY = (lm[0].y + lm[9].y) * 0.5;
+
+      // Mirror X so natural mirror-reflection behavior matches user movement
+      const mirroredScreenX = (1.0 - palmX) * width;
+      const screenY = palmY * height;
+
+      focalCenter.targetX = mirroredScreenX;
+      focalCenter.targetY = screenY;
+
+      // 2. Calibrated Hand-Distance Scale Proxy
+      // Use invariant palm carpal-metacarpal bone distance (Wrist lm[0] to Middle MCP lm[9])
+      // This bone NEVER flexes when making a fist, preventing scale distortion!
+      const boneDist = Math.hypot(lm[9].x - lm[0].x, lm[9].y - lm[0].y);
+      // Map normalized bone length (approx 0.12 far to 0.38 near) to 0.5x - 2.5x
+      const rawScale = 0.5 + ((boneDist - 0.12) / (0.38 - 0.12)) * (2.5 - 0.5);
+      focalCenter.targetScale = Math.max(0.5, Math.min(2.5, rawScale));
+
+      // 3. Gesture Classification
+      const wrist = lm[0];
+      const thumbTip = lm[4];
+      const indexMcp = lm[5], indexPip = lm[6], indexTip = lm[8];
+      const middleMcp = lm[9], middlePip = lm[10], middleTip = lm[12];
+      const ringMcp = lm[13], ringPip = lm[14], ringTip = lm[16];
+      const pinkyMcp = lm[17], pinkyPip = lm[18], pinkyTip = lm[20];
+
+      // Bone size reference
+      const refSpan = boneDist;
+
+      // Finger Extension Check
+      const indexExtended = Math.hypot(indexTip.x - wrist.x, indexTip.y - wrist.y) > Math.hypot(indexMcp.x - wrist.x, indexMcp.y - wrist.y) * 1.25;
+      const middleExtended = Math.hypot(middleTip.x - wrist.x, middleTip.y - wrist.y) > Math.hypot(middleMcp.x - wrist.x, middleMcp.y - wrist.y) * 1.25;
+      const ringExtended = Math.hypot(ringTip.x - wrist.x, ringTip.y - wrist.y) > Math.hypot(ringMcp.x - wrist.x, ringMcp.y - wrist.y) * 1.25;
+      const pinkyExtended = Math.hypot(pinkyTip.x - wrist.x, pinkyTip.y - wrist.y) > Math.hypot(pinkyMcp.x - wrist.x, pinkyMcp.y - wrist.y) * 1.25;
+
+      // Curled tips distance to wrist for Fist verification
+      const indexCurled = Math.hypot(indexTip.x - wrist.x, indexTip.y - wrist.y) < refSpan * 1.15;
+      const middleCurled = Math.hypot(middleTip.x - wrist.x, middleTip.y - wrist.y) < refSpan * 1.15;
+      const ringCurled = Math.hypot(ringTip.x - wrist.x, ringTip.y - wrist.y) < refSpan * 1.15;
+      const pinkyCurled = Math.hypot(pinkyTip.x - wrist.x, pinkyTip.y - wrist.y) < refSpan * 1.15;
+
+      const isFist = indexCurled && middleCurled && ringCurled && pinkyCurled && !indexExtended && !middleExtended;
+      const isOpenPalm = indexExtended && middleExtended && ringExtended && pinkyExtended;
+      const isPointing = indexExtended && !middleExtended && !ringExtended && !pinkyExtended;
+      const isPeace = indexExtended && middleExtended && !ringExtended && !pinkyExtended;
+
+      // 4. Edge-Triggered State Machine with Debounce
+      if (isFist) {
+        gestureValueText.textContent = "CLOSED FIST (CYCLE)";
+        gestureIconBadge.textContent = "✊";
+
+        if (!isFistHeld && (now - lastFistTriggerTime > FIST_COOLDOWN)) {
+          switchWorldNext();
+          lastFistTriggerTime = now;
+          gestureStatusTag.textContent = "NEXT WORLD";
+          gestureStatusTag.className = "gesture-status-tag active-cycle";
+        }
+        isFistHeld = true;
+      } else {
+        isFistHeld = false;
+      }
+
+      if (isOpenPalm) {
+        gestureValueText.textContent = "OPEN PALM (BURST)";
+        gestureIconBadge.textContent = "✋";
+
+        if (!isOpenPalmHeld && (now - lastBurstTriggerTime > BURST_COOLDOWN)) {
+          triggerMagicalBurst();
+          lastBurstTriggerTime = now;
+        }
+        isOpenPalmHeld = true;
+      } else {
+        isOpenPalmHeld = false;
+      }
+
+      if (!isFist && !isOpenPalm) {
+        if (isPointing) {
+          gestureValueText.textContent = "POINTING GUIDANCE";
+          gestureIconBadge.textContent = "☝️";
+        } else if (isPeace) {
+          gestureValueText.textContent = "VICTORY HARMONY";
+          gestureIconBadge.textContent = "✌️";
+        } else {
+          gestureValueText.textContent = "HAND TRACKING";
+          gestureIconBadge.textContent = "🖐️";
+        }
+        gestureStatusTag.textContent = "TRACKING";
+        gestureStatusTag.className = "gesture-status-tag";
+      }
+    }
+
+    function handleNoHandDetected() {
+      focalCenter.active = false;
+      isFistHeld = false;
+      isOpenPalmHeld = false;
+
+      gestureValueText.textContent = "NO HAND DETECTED";
+      gestureIconBadge.textContent = "⏳";
+      gestureStatusTag.textContent = "NO HAND";
+      gestureStatusTag.className = "gesture-status-tag no-hand";
+    }
+
+    /* --------------------------------------------------------------------------
+       Draw Mirrored Video & MediaPipe 21-point Skeleton in Preview Box
+       -------------------------------------------------------------------------- */
+    function drawSkeletonPreview(landmarks) {
+      const sw = skeletonCanvas.width / dpr;
+      const sh = skeletonCanvas.height / dpr;
+
+      skelCtx.clearRect(0, 0, sw, sh);
+
+      // 1. Draw mirrored video frame
+      if (webcamVideo.readyState >= 2) {
+        skelCtx.save();
+        skelCtx.scale(-1, 1);
+        skelCtx.drawImage(webcamVideo, -sw, 0, sw, sh);
+        skelCtx.restore();
+
+        // Dark subtle tint overlay for neon skeleton contrast
+        skelCtx.fillStyle = "rgba(10, 6, 20, 0.45)";
+        skelCtx.fillRect(0, 0, sw, sh);
+      } else {
+        skelCtx.fillStyle = "#0c0817";
+        skelCtx.fillRect(0, 0, sw, sh);
+      }
+
+      // 2. Draw 21-landmark skeleton
+      if (landmarks && landmarks.length > 0) {
+        const lm = landmarks[0];
+
+        // Draw glowing neon connection lines
+        skelCtx.save();
+        skelCtx.lineWidth = 2.2;
+        skelCtx.strokeStyle = "rgba(78, 242, 187, 0.85)"; // Neon Mint
+        skelCtx.shadowColor = "#4ef2bb";
+        skelCtx.shadowBlur = 6;
+
+        for (let [i, j] of HAND_CONNECTIONS) {
+          const pt1 = lm[i];
+          const pt2 = lm[j];
+          if (!pt1 || !pt2) continue;
+
+          // Mirrored X coordinates
+          const x1 = (1.0 - pt1.x) * sw;
+          const y1 = pt1.y * sh;
+          const x2 = (1.0 - pt2.x) * sw;
+          const y2 = pt2.y * sh;
+
+          skelCtx.beginPath();
+          skelCtx.moveTo(x1, y1);
+          skelCtx.lineTo(x2, y2);
+          skelCtx.stroke();
+        }
+        skelCtx.restore();
+
+        // Draw joint landmarks
+        for (let i = 0; i < lm.length; i++) {
+          const pt = lm[i];
+          const px = (1.0 - pt.x) * sw;
+          const py = pt.y * sh;
+
+          skelCtx.save();
+          skelCtx.beginPath();
+          // Fingertips (4, 8, 12, 16, 20) in vivid sakura pink, other joints in cyan/white
+          const isTip = [4, 8, 12, 16, 20].includes(i);
+          const r = isTip ? 4.0 : 2.5;
+
+          skelCtx.arc(px, py, r, 0, TWO_PI);
+          skelCtx.fillStyle = isTip ? "#ff69b4" : "#ffffff";
+          skelCtx.shadowColor = isTip ? "#ff69b4" : "#4ef2bb";
+          skelCtx.shadowBlur = 8;
+          skelCtx.fill();
+          skelCtx.restore();
+        }
+      }
+    }
+
+    /* ==========================================================================
+       Mouse & Keyboard Fallbacks (Testing Without Webcam)
+       ========================================================================== */
+    window.addEventListener('mousemove', (e) => {
+      // If camera is not actively driving coordinates, mouse moves focal point
+      if (!cameraStream || !focalCenter.active) {
+        focalCenter.targetX = e.clientX;
+        focalCenter.targetY = e.clientY;
+      }
+    });
+
+    window.addEventListener('mousedown', (e) => {
+      // Avoid triggering when clicking on UI buttons
+      if (e.target.closest('.ui-interactive') || e.target.closest('.modal-content')) return;
+      triggerMagicalBurst();
+    });
+
+    window.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      focalCenter.targetScale = Math.max(0.5, Math.min(2.5, focalCenter.targetScale + delta));
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        triggerMagicalBurst();
+      } else if (key === '1') {
+        switchWorld('sakura');
+      } else if (key === '2') {
+        switchWorld('butterfly');
+      } else if (key === '3') {
+        switchWorld('firefly');
+      } else if (key === '4') {
+        switchWorld('bloom');
+      } else if (key === 'w' || key === 'tab') {
+        e.preventDefault();
+        switchWorldNext();
+      } else if (key === '[' || key === '-') {
+        focalCenter.targetScale = Math.max(0.5, focalCenter.targetScale - 0.2);
+      } else if (key === ']' || key === '=') {
+        focalCenter.targetScale = Math.min(2.5, focalCenter.targetScale + 0.2);
+      } else if (key === 'f') {
+        toggleFullscreen();
+      } else if (key === 'c') {
+        if (cameraStream) {
+          const track = cameraStream.getVideoTracks()[0];
+          if (track) {
+            track.enabled = !track.enabled;
+            showToast(track.enabled ? "Camera unpaused" : "Camera paused");
+          }
+        } else {
+          startWebcam();
+        }
+      } else if (key === 'm') {
+        toggleSound();
+      } else if (key === '?' || key === 'h') {
+        toggleHelpModal();
+      } else if (key === 'escape') {
+        helpModal.classList.remove('open');
+      }
+    });
+
+    /* ==========================================================================
+       UI Controls & Fullscreen Handlers
+       ========================================================================== */
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+    btnFullscreen.addEventListener('click', toggleFullscreen);
+
+    function toggleSound() {
+      const isMuted = soundEngine.toggleMute();
+      btnSoundToggle.classList.toggle('active', !isMuted);
+      showToast(isMuted ? "Magical soundscape muted" : "Magical chimes enabled 🎵");
+    }
+    btnSoundToggle.addEventListener('click', toggleSound);
+
+    function toggleHelpModal() {
+      helpModal.classList.toggle('open');
+    }
+    btnHelpToggle.addEventListener('click', toggleHelpModal);
+    btnCloseHelp.addEventListener('click', () => helpModal.classList.remove('open'));
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) helpModal.classList.remove('open');
+    });
+
+    /* ==========================================================================
+       Main Render Loop & Performance Optimization
+       ========================================================================== */
+    let frameCount = 0;
+    let lastFpsUpdate = performance.now();
+    let currentFps = 60;
+
+    function renderLoop(now) {
+      // 1. Process Video Frame with MediaPipe HandLandmarker
+      let landmarks = null;
+      if (handLandmarker && webcamVideo.readyState >= 2) {
+        if (webcamVideo.currentTime !== lastVideoTime) {
+          lastVideoTime = webcamVideo.currentTime;
+          try {
+            const results = handLandmarker.detectForVideo(webcamVideo, now);
+            if (results && results.landmarks) {
+              landmarks = results.landmarks;
+              if (landmarks.length > 0) {
+                processHandLandmarks(landmarks, now);
+              } else {
+                handleNoHandDetected();
+              }
+            }
+          } catch(detectErr) {
+            // Ignore temporary skipped frames
+          }
+        }
+      }
+
+      // Draw skeleton preview (only every 2nd frame if heavy, runs smooth 30-60fps)
+      if (frameCount % 2 === 0) {
+        drawSkeletonPreview(landmarks);
+      }
+
+      // 2. Smooth Focal Point & Scale Interpolation (Lerp)
+      focalCenter.x += (focalCenter.targetX - focalCenter.x) * 0.14;
+      focalCenter.y += (focalCenter.targetY - focalCenter.y) * 0.14;
+      focalCenter.scale += (focalCenter.targetScale - focalCenter.scale) * 0.12;
+
+      // 3. Clear Garden Canvas
+      ctx.clearRect(0, 0, width, height);
+
+      // 4. Update and Draw Active World
+      const activeEngine = worlds[currentWorld];
+      activeEngine.update(now, focalCenter.scale);
+      activeEngine.draw(ctx, now, focalCenter.scale);
+
+      // 5. Update Telemetry Dashboard
+      frameCount++;
+      if (now - lastFpsUpdate >= 500) {
+        currentFps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+        fpsVal.textContent = currentFps;
+        frameCount = 0;
+        lastFpsUpdate = now;
+
+        // Particle counter
+        particleCountVal.textContent = activeEngine.getCount();
+
+        // Scale bar
+        scaleVal.textContent = `${focalCenter.scale.toFixed(2)}x`;
+        const scalePct = Math.round(((focalCenter.scale - 0.5) / (2.5 - 0.5)) * 100);
+        scaleBarFill.style.width = `${Math.max(5, Math.min(100, scalePct))}%`;
+      }
+
+      requestAnimationFrame(renderLoop);
+    }
+
+    // Startup Initialization
+    resizeCanvas();
+    switchWorld('sakura');
+    initMediaPipeHandTracker();
+    requestAnimationFrame(renderLoop);
+
+  </script>
+</body>
+</html>
