@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KlarBlick AI – Privatsphäre-konforme KI-Datenbrille für Deutschland</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-light: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent: #0284c7;
+      --accent-dark: #0369a1;
+      --emerald: #059669;
+      --amber: #d97706;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
+      background: #ffffff;
+    }
+    header {
+      background: var(--bg);
+      color: #ffffff;
+      padding: 1.25rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+    .logo { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; }
+    .logo span { color: #38bdf8; }
+    nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 0.95rem;
+    }
+    nav a:hover { color: #ffffff; }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 5rem 5% 4.5rem;
+      text-align: center;
+    }
+    .eyebrow {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.1rem, 4vw, 3.25rem);
+      line-height: 1.15;
+      max-width: 820px;
+      margin: 0 auto 1.25rem;
+    }
+    .hero p {
+      color: #cbd5e1;
+      max-width: 720px;
+      margin: 0 auto 2rem;
+      font-size: 1.125rem;
+    }
+    .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 0.85rem 1.6rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #ffffff; }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-secondary { background: transparent; color: #ffffff; border: 1px solid #64748b; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+    .trust-bar {
+      background: var(--surface-light);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 5%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    section { padding: 4.5rem 5%; max-width: 1180px; margin: 0 auto; }
+    h2 { font-size: 1.9rem; margin-bottom: 0.75rem; text-align: center; }
+    .section-sub { text-align: center; color: var(--text-muted); max-width: 680px; margin: 0 auto 3rem; }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.75rem;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .card-tag { color: var(--accent); font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .card h3 { font-size: 1.2rem; margin-bottom: 0.65rem; }
+    .card p { color: var(--text-muted); font-size: 0.95rem; }
+
+    .simulator {
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2.25rem;
+    }
+    .toggle-bar { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+    .mode-btn {
+      padding: 0.7rem 1.25rem;
+      border-radius: 0.5rem;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mode-btn.active { background: var(--bg); color: #ffffff; border-color: var(--bg); }
+    .sim-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .pill-safe { background: #d1fae5; color: var(--emerald); }
+    .pill-active { background: #fef3c7; color: var(--amber); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.95rem; }
+    th, td { padding: 0.95rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: var(--surface-light); font-weight: 700; }
+
+    .form-box {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 2rem;
+    }
+    .form-group { margin-bottom: 1.15rem; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.35rem; }
+    input, select {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.45rem;
+      font-size: 0.95rem;
+    }
+    .checkbox-row { display: flex; gap: 0.65rem; align-items: flex-start; font-size: 0.85rem; color: var(--text-muted); }
+    .checkbox-row input { width: auto; margin-top: 0.25rem; }
+    #form-feedback { margin-top: 1rem; font-weight: 600; color: var(--emerald); display: none; }
+
+    footer {
+      background: var(--bg);
+      color: #94a3b8;
+      padding: 2.5rem 5%;
+      font-size: 0.875rem;
+    }
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-links a { color: #cbd5e1; text-decoration: none; margin-right: 1.25rem; }
+    .footer-links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">KlarBlick <span>AI</span></div>
+    <nav>
+      <a href="#vorteile">Vorteile</a>
+      <a href="#privatsphaere">Privatsphäre-Simulator</a>
+      <a href="#spezifikationen">Spezifikationen</a>
+      <a href="#pilot">Pilotprojekt</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="eyebrow">ENTWICKELT FÜR DEN DEUTSCHEN MITTELSTAND</div>
+    <h1>Intelligenz im Blick. Privatsphäre im Griff.</h1>
+    <p>Die ultraleichte 38-g-KI-Datenbrille für Industrie, Service und Fokus-Arbeit – mit physischem Kamera- &amp; Mikrofon-Kill-Switch, 100 % EU-Datenhosting in Frankfurt und vorzertifizierter Betriebsrat-Konformität.</p>
+    <div class="cta-group">
+      <a href="#pilot" class="btn btn-primary">Demo für Unternehmen anfragen</a>
+      <a href="#privatsphaere" class="btn btn-secondary">DSGVO- &amp; Betriebsrat-Whitepaper laden</a>
+    </div>
+  </div>
+
+  <div class="trust-bar">
+    <div>100 % DSGVO-konform (Art. 25 Privacy by Design)</div>
+    <div>§ 201 StGB-sicher durch Hardware-Trennung</div>
+    <div>Betriebsrat-ready (§ 87 Abs. 1 Nr. 6 BetrVG)</div>
+    <div>Serverstandort Frankfurt (DE) – Kein KI-Training</div>
+  </div>
+
+  <section id="vorteile">
+    <h2>Gebaut für deutsche Compliance-Standards</h2>
+    <p class="section-sub">Während herkömmliche Smart Glasses an Datenschutz und Mitbestimmung scheitern, kombiniert KlarBlick AI mechanische Sicherheit mit produktiver AR-Unterstützung.</p>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-tag">01 | HARDWARE-SICHERHEIT</div>
+        <h3>Physischer Privatsphäre-Schalter</h3>
+        <p>Kein Software-Trick, sondern echte Mechanik: Ein haptischer Schieberegler verdeckt die Kamera physisch und trennt die Stromzufuhr der Mikrofone. Eine hartverdrahtete Status-LED signalisiert volle Transparenz.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">02 | MITBESTIMMUNG</div>
+        <h3>Betriebsrat-konform ab Werk</h3>
+        <p>Im Zero-Telemetry-Modus arbeitet KlarBlick AI rein lokal als passives Waveguide-Display für Checklisten, CAD-Hinweise und Live-Übersetzungen – inklusive fertiger Muster-Betriebsvereinbarung und DSFA-Vorlage.</p>
+      </div>
+      <div class="card">
+        <div class="card-tag">03 | ERGONOMIE</div>
+        <h3>38 g Präzisions-Optik mit Sehstärke</h3>
+        <p>Gefertigt aus ultraleichtem Titan mit hochkontrastigem Monochrom-Waveguide-Display. Ganztägiger Tragekomfort und individuelle Verglasung über zertifizierte Partner-Optiker in ganz Deutschland.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="privatsphaere">
+    <h2>Interaktiver Privatsphäre-Simulator</h2>
+    <p class="section-sub">Testen Sie, wie sich Sensorik und Datenfluss per Hardware-Schalter umschalten lassen.</p>
+    <div class="simulator">
+      <div class="toggle-bar">
+        <button class="mode-btn active" id="btn-office" onclick="setMode('office')">Modus A: Büro- &amp; Betriebsrat-Modus (Zero-Telemetry)</button>
+        <button class="mode-btn" id="btn-field" onclick="setMode('field')">Modus B: Field-Service &amp; Remote-Support AR</button>
+      </div>
+      <div class="sim-panel" id="sim-output">
+        <div>
+          <span class="status-pill pill-safe">HARDWARE GETRENNT</span>
+          <h4>Kamera &amp; Mikrofon</h4>
+          <p>Physischer Schieber geschlossen. Stromkreis zu Kamera und Richtmikrofonen mechanisch unterbrochen (§ 201 StGB-konform).</p>
+        </div>
+        <div>
+          <span class="status-pill pill-safe">0 BYTE CLOUD-TRANSFER</span>
+          <h4>Datenverarbeitung</h4>
+          <p>Rein lokale Anzeige von Checklisten, Kalenderhinweisen und Offline-Notizen über Bluetooth LE vom gekoppelten Dienst-Smartphone.</p>
+        </div>
+        <div>
+          <span class="status-pill pill-safe">BETRIEBSRAT FREIGEGEBEN</span>
+          <h4>Mitbestimmung (§ 87 BetrVG)</h4>
+          <p>Keine Verhaltens- oder Leistungskontrolle technisch möglich. Sofort einsatzbereit in sensiblen Werks- und Entwicklungsbereichen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="spezifikationen">
+    <h2>Technische Spezifikationen &amp; Compliance-Vergleich</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Merkmal</th>
+          <th>KlarBlick AI Enterprise</th>
+          <th>Herkömmliche Consumer Smart Glasses</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Gesamtgewicht</strong></td>
+          <td>38 g (Titanrahmen, inkl. Waveguide-Optik)</td>
+          <td>49 g – 65 g</td>
+        </tr>
+        <tr>
+          <td><strong>Kamera- &amp; Mikrofon-Schutz</strong></td>
+          <td>Physischer Mechanik-Schieber + Hardware-Stromtrennung</td>
+          <td>Nur Software-Stummschaltung</td>
+        </tr>
+        <tr>
+          <td><strong>Cloud-Hosting &amp; KI-Training</strong></td>
+          <td>100 % Frankfurt (EU) Server-Standort; kein KI-Training mit Nutzerdaten</td>
+          <td>US-Cloud-Routing; häufiges Modelltraining</td>
+        </tr>
+        <tr>
+          <td><strong>Betriebsrat-Dokumentation</strong></td>
+          <td>Muster-Betriebsvereinbarung &amp; DSFA (Art. 35 DSGVO) enthalten</td>
+          <td>Nicht vorhanden</td>
+        </tr>
+        <tr>
+          <td><strong>Sehstärke (Korrektionsgläser)</strong></td>
+          <td>Zertifizierte Partner-Optiker in DE / AT / CH</td>
+          <td>Eingeschränkt</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="pilot">
+    <h2>Pilotprojekt für Ihr Team starten</h2>
+    <p class="section-sub">Fordern Sie ein 5er-Testpaket inklusive MDM-Zugang und DSGVO-/Betriebsrat-Dokumentationsmappe an.</p>
+    <div class="form-box">
+      <form onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="company">Unternehmen</label>
+          <input type="text" id="company" required placeholder="z. B. Musterwerk Maschinenbau GmbH" />
+        </div>
+        <div class="form-group">
+          <label for="email">Geschäftliche E-Mail-Adresse</label>
+          <input type="email" id="email" required placeholder="name@unternehmen.de" />
+        </div>
+        <div class="form-group">
+          <label for="usecase">Primärer Anwendungsfall</label>
+          <select id="usecase">
+            <option>Wartung &amp; Field-Service (Industrie 4.0)</option>
+            <option>Qualitätssicherung &amp; Montage-Checklisten</option>
+            <option>Live-Übersetzung &amp; Executive-Produktivität</option>
+          </select>
+        </div>
+        <div class="form-group checkbox-row">
+          <input type="checkbox" id="gdpr" required />
+          <label for="gdpr" style="font-weight: 400;">
+            Ich habe die Datenschutzerklärung zur Kenntnis genommen und stimme der Verarbeitung meiner geschäftlichen Kontaktdaten zur Bearbeitung meiner Anfrage zu (Art. 6 Abs. 1 lit. b &amp; Art. 13 DSGVO).
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Unverbindliches Pilot-Angebot anfordern</button>
+        <div id="form-feedback">Vielen Dank! Ihre Anfrage wurde verschlüsselt übermittelt. Unser B2B-Team aus Deutschland meldet sich innerhalb von 24 Stunden.</div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div>&copy; 2026 KlarBlick AI GmbH (Pforzheim / Frankfurt am Main). Alle Rechte vorbehalten.</div>
+      <div class="footer-links">
+        <a href="#impressum">Impressum</a>
+        <a href="#datenschutz">Datenschutz (DSGVO)</a>
+        <a href="#betriebsrat">Betriebsrat-Leitfaden</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function setMode(mode) {
+      const btnOffice = document.getElementById('btn-office');
+      const btnField = document.getElementById('btn-field');
+      const output = document.getElementById('sim-output');
+
+      if (mode === 'office') {
+        btnOffice.classList.add('active');
+        btnField.classList.remove('active');
+        output.innerHTML = `
+          <div>
+            <span class="status-pill pill-safe">HARDWARE GETRENNT</span>
+            <h4>Kamera &amp; Mikrofon</h4>
+            <p>Physischer Schieber geschlossen. Stromkreis zu Kamera und Richtmikrofonen mechanisch unterbrochen (§ 201 StGB-konform).</p>
+          </div>
+          <div>
+            <span class="status-pill pill-safe">0 BYTE CLOUD-TRANSFER</span>
+            <h4>Datenverarbeitung</h4>
+            <p>Rein lokale Anzeige von Checklisten, Kalenderhinweisen und Offline-Notizen über Bluetooth LE vom gekoppelten Dienst-Smartphone.</p>
+          </div>
+          <div>
+            <span class="status-pill pill-safe">BETRIEBSRAT FREIGEGEBEN</span>
+            <h4>Mitbestimmung (§ 87 BetrVG)</h4>
+            <p>Keine Verhaltens- oder Leistungskontrolle technisch möglich. Sofort einsatzbereit in sensiblen Werks- und Entwicklungsbereichen.</p>
+          </div>
+        `;
+      } else {
+        btnField.classList.add('active');
+        btnOffice.classList.remove('active');
+        output.innerHTML = `
+          <div>
+            <span class="status-pill pill-active">STATUS-LED AKTIV (GELB)</span>
+            <h4>Kamera &amp; Richtmikrofon</h4>
+            <p>Physischer Schieber geöffnet. Sichtbare Status-LED signalisiert aktive Freigabe für Remote-Wartung und Live-Übersetzung.</p>
+          </div>
+          <div>
+            <span class="status-pill pill-safe">SERVERSTANDORT FRANKFURT</span>
+            <h4>EU-Sovereign KI-Stream</h4>
+            <p>Ende-zu-Ende-verschlüsselte Verbindung (ISO 27001, Frankfurt). Echtzeit-Übersetzung (DE/EN/FR/PL) ohne Speicherung oder Modelltraining.</p>
+          </div>
+          <div>
+            <span class="status-pill pill-safe">AUDIT-LOG AKTIVIERT</span>
+            <h4>Protokollierung nach Betriebsvereinbarung</h4>
+            <p>Sitzungsbasierte Freigabe durch den Techniker selbst – keine verdeckte Dauerüberwachung durch Vorgesetzte.</p>
+          </div>
+        `;
+      }
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      document.getElementById('form-feedback').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
